@@ -14,7 +14,7 @@ CREATE TABLE players (
     player_id serial primary key,
     name text,
     wins int DEFAULT 0,
-    losses int DEFAULT 0
+    matches int DEFAULT 0
 );
 
 CREATE TABLE matches (
