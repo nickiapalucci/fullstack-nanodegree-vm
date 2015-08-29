@@ -104,5 +104,26 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-
+#   Establish psycopg cursor
+    conn = connect()
+    c = conn.cursor()
+#   Create list of tuples from database players
+    c.execute("SELECT player_id, name FROM players ORDER BY wins DESC;")
+    pairings = c.fetchall()
+    conn.close()
+#   Unpack tuples and create new list of matched pairs
+    swiss_pairing = []
+    for x in pairings:
+        if len(pairings) >= 2:
+            (pid1, pname1) = pairings.pop(0)
+            (pid2, pname2) = pairings.pop(0)
+            a = (pid1, pname1, pid2, pname2)
+            swiss_pairing.append(a)
+        elif len(pairings) == 1:
+#           future feature, odd player wins bye once only
+            break
+        else:
+            break
+    print swiss_pairing
+    return swiss_pairing
 
