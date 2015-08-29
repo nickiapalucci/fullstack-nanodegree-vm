@@ -12,6 +12,7 @@ def connect():
 
 
 def deleteMatches():
+    """Reset match count to 0 in table players in database tournament"""
     conn = connect()
     c = conn.cursor()
     c.execute("UPDATE players SET matches = 0;")
@@ -19,6 +20,7 @@ def deleteMatches():
     conn.close()
 
 def deletePlayers():
+    """Remove all data from table players"""
     conn = connect()
     c = conn.cursor()
     c.execute("DELETE FROM players;")
@@ -26,6 +28,7 @@ def deletePlayers():
     conn.close()
 
 def countPlayers():
+    """Count all rows in table players, return integer of result"""
     conn = connect()
     c = conn.cursor()
     c.execute("SELECT COUNT (*) FROM players;")
@@ -34,14 +37,7 @@ def countPlayers():
     return int(player_count[0])
 
 def registerPlayer(name):
-    """Adds a player to the tournament database.
-  
-    The database assigns a unique serial id number for the player.  (This
-    should be handled by your SQL database schema, not in your Python code.)
-  
-    Args:
-      name: the player's full name (need not be unique).
-    """
+    """Add a player to the database"""
     conn = connect()
     c = conn.cursor()
     c.execute("INSERT INTO players (name) VALUES (%s);", (name,))
@@ -49,33 +45,18 @@ def registerPlayer(name):
     conn.close()
 
 def playerStandings():
-    """Returns a list of the players and their win records, sorted by wins.
-
-    The first entry in the list should be the player in first place, or a player
-    tied for first place if there is currently a tie.
-
-    Returns:
-      A list of tuples, each of which contains (id, name, wins, matches):
-        id: the player's unique id (assigned by the database)
-        name: the player's full name (as registered)
-        wins: the number of matches the player has won
-        matches: the number of matches the player has played
-    """
+    """Sort all rows in database by column wins.  Return
+       a list of tuples with (id, name, wins, matches)"""
     conn = connect()
     c = conn.cursor()
+#   create a list of tuples
     c.execute("SELECT * FROM players ORDER BY wins;")
     standings = c.fetchall()
     c = conn.close()
-    print standings
     return standings
 
 def reportMatch(winner, loser):
-    """Records the outcome of a single match between two players.
-
-    Args:
-      winner:  the id number of the player who won
-      loser:  the id number of the player who lost
-    """
+    """Record the outcome of a single match between two players"""
     conn = connect()
     c = conn.cursor()
 #   Update Match Count of both players
@@ -90,24 +71,12 @@ def reportMatch(winner, loser):
     conn.close()
  
 def swissPairings():
-    """Returns a list of pairs of players for the next round of a match.
-  
-    Assuming that there are an even number of players registered, each player
-    appears exactly once in the pairings.  Each player is paired with another
-    player with an equal or nearly-equal win record, that is, a player adjacent
-    to him or her in the standings.
-  
-    Returns:
-      A list of tuples, each of which contains (id1, name1, id2, name2)
-        id1: the first player's unique id
-        name1: the first player's name
-        id2: the second player's unique id
-        name2: the second player's name
-    """
-#   Establish psycopg cursor
+    """Sort rows by wins
+       Create an output of player's id and name
+       Create a list of tuples with (id1, name1, id2, name2)"""
     conn = connect()
     c = conn.cursor()
-#   Create list of tuples from database players
+#   Create list of tuples from database
     c.execute("SELECT player_id, name FROM players ORDER BY wins DESC;")
     pairings = c.fetchall()
     conn.close()
@@ -120,10 +89,9 @@ def swissPairings():
             a = (pid1, pname1, pid2, pname2)
             swiss_pairing.append(a)
         elif len(pairings) == 1:
-#           future feature, odd player wins bye once only
+#   future feature, odd player wins bye once only
             break
         else:
             break
-    print swiss_pairing
     return swiss_pairing
 
