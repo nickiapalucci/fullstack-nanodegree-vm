@@ -16,10 +16,3 @@ CREATE TABLE players (
     wins int DEFAULT 0,
     matches int DEFAULT 0
 );
-
-CREATE TABLE matches (
-    match_id serial primary key,
-    player_1 integer references players(player_id),
-    player_2 integer references players(player_id),
-    winner integer references players(player_id)
-);

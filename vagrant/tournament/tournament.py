@@ -14,7 +14,7 @@ def connect():
 def deleteMatches():
     conn = connect()
     c = conn.cursor()
-    c.execute("DELETE FROM matches;")
+    c.execute("UPDATE players SET matches = 0;")
     conn.commit()
     conn.close()
 
