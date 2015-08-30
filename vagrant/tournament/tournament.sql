@@ -12,14 +12,11 @@ CREATE DATABASE tournament;
 
 CREATE TABLE players (
     player_id serial primary key,
-    name text,
-    wins text,
-    losses text
+    name text
 );
 
 CREATE TABLE matches (
     match_id serial primary key,
-    player_1 integer references players(player_id),
-    player_2 integer references players(player_id),
-    winner integer references players(player_id)
+    winner integer references players(player_id),
+    loser integer references players(player_id),
 );
