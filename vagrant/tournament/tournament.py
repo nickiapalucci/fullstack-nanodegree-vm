@@ -1,16 +1,18 @@
 #!/usr/bin/env python
-# 
+#
 # tournament.py -- implementation of a Swiss-system tournament
 #
 
 import psycopg2
 
+
 def connect():
     """Connect to the PostgreSQL database.  Returns a cursor."""
-    global conn 
+    global conn
     conn = psycopg2.connect("dbname=tournament")
     c = conn.cursor()
     return c
+
 
 def deleteMatches():
     """Reset match count to 0 in table players"""
@@ -19,12 +21,14 @@ def deleteMatches():
     conn.commit()
     conn.close()
 
+
 def deletePlayers():
     """Remove all data from table players"""
     c = connect()
     c.execute("DELETE FROM players;")
     conn.commit()
     conn.close()
+
 
 def countPlayers():
     """Count all rows in table players, return integer of result"""
@@ -34,6 +38,7 @@ def countPlayers():
     conn.close()
     return int(player_count[0])
 
+
 def registerPlayer(name):
     """Add a player to the database"""
     c = connect()
@@ -41,17 +46,18 @@ def registerPlayer(name):
     conn.commit()
     conn.close()
 
+
 def playerStandings():
     """Sort all rows in database by column wins.  Return
        a list of tuples with (id, name, wins, matches)"""
     c = connect()
-    c.execute("""SELECT 
-                 win_count.player_id, 
+    c.execute("""SELECT
+                 win_count.player_id,
                  win_count.name,
                  win_count.wins,
                  total_count.total
                  FROM win_count, loss_count, total_count
-                 GROUP BY 
+                 GROUP BY
                      win_count.player_id,
                      win_count.name,
                      win_count.wins,
@@ -70,8 +76,8 @@ def reportMatch(winner, loser):
                  VALUES (%s, %s);""", (winner, loser,))
     conn.commit()
     conn.close()
- 
- 
+
+
 def swissPairings():
     """Sort rows by wins
         Create an output of player's id and name
