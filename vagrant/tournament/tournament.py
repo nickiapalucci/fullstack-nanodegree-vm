@@ -77,7 +77,6 @@ def playerStandings():
                  ORDER BY
                      wins DESC;""")
     standings = c.fetchall()
-    print standings
     return standings
     conn.close()
 
@@ -112,5 +111,17 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-
+    pairings = playerStandings()
+    swiss_pairing = []
+    for x in pairings:
+        if len(pairings) >= 2:
+            (pid1, pname1, c1, d1) = pairings.pop(0)
+            (pid2, pname2, c2, d2) = pairings.pop(0)
+            a = (pid1, pname1, pid2, pname2)
+            swiss_pairing.append(a)
+        elif len(pairings) == 1:  # For future use of odd number of players
+            break
+        else:
+            break
+    return swiss_pairing
 
